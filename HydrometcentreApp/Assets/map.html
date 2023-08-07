@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Custom Map</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css" />
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"></script>
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            height: 100%;
+            padding: 0;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #map {
+            flex: 1;
+        }
+
+        .timestamp-button {
+            font-size: 16px;
+            padding: 5px;
+            margin-right: 3px;
+            margin-left: 3px;
+            margin-top: 25px;
+            margin-bottom: 35px;
+            border-radius: 3px;
+            border: 1px solid;
+        }
+
+        #qwe-container {
+            width: 100%;
+            display: flex;
+        }
+
+        #buttons-container {
+            display: flex;
+            width: 100%;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+
+        .selected-button {
+            background-color: #999999;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="flex-container">
+        <div id="map"></div>
+        <div id="qwe-container">
+            <div id="buttons-container"></div>
+        </div>
+    </div>
+
+    <script>
+        var myURL;
+        var myLayer;
+
+        fetch('https://meteoinfo.ru/hmc-output/nowcast3/nowcast.php')
+            .then(response => response.text())
+            .then(xmlResponse => {
+
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlResponse, "text/xml");
+
+                const defaultTimeString = xmlDoc.querySelector('Extent[name="time"]').getAttribute('default');
+                return new Date(defaultTimeString).getTime();
+            }).then(defaultTime => {
+                var map = L.map('map', {
+                    zoom: 8,
+                    minZoom:5,
+                    maxZoom: 10,
+                    fullscreenControl: true,
+                    timeDimension: true,
+                    maxBounds: [[30, 90], [70, 0]],
+                    center: [55.75371, 37.6198134]
+                });
+
+                var theLegend = L.control({
+                    position: 'topright'
+                });
+                theLegend.onAdd = function (map) {
+                    var src = "https://meteoinfo.ru/hmc-output/nowcast3/plegend.png";
+                    var div = L.DomUtil.create('div', 'info legend');
+                    div.innerHTML += '<img src="' + src + '">';
+                    return div;
+                };
+                theLegend.addTo(map);
+
+                L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                }).addTo(map);
+
+                myURL = 'https://meteoinfo.ru/res/nowcast/{z}0{x}0{y}/ncgi.php?tnz={z}&tnx={x}&tny={y}' + '&inidt=' + defaultTime;
+                myLayer = L.tileLayer.wms(myURL, {
+                    layers: '1',
+                    continuousWorld: true,
+                    format: 'image/png',
+                    maxNativeZoom: 8,
+                    transparent: true,
+                    opacity: 0.6,
+                    tms: true,
+                    bounds: [new L.LatLng(42.07763077261187, 62.60899643948548), new L.LatLng(68.22855697214425, 18.67942748094448)]
+                }).addTo(map);
+            })
+            .catch(error => {
+                console.error('', error);
+            });
+
+
+        fetch('https://meteoinfo.ru/hmc-output/nowcast3/nowcast.php')
+            .then(response => response.text())
+            .then(xmlResponse => {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlResponse, "text/xml");
+
+                const timeElement = xmlDoc.querySelectorAll('Extent[name="time"]')[0];
+                return timeElement.textContent.split(',');
+
+            }).then(timeArray => {
+                const timeArrayMilliseconds = timeArray.map(timeString => new Date(timeString).getTime());
+                function formatTimeFromMilliseconds(milliseconds) {
+                    const date = new Date(milliseconds);
+                    const hours = date.getHours().toString().padStart(2, '0');
+                    const minutes = date.getMinutes().toString().padStart(2, '0');
+                    return `${hours}:${minutes}`;
+                }
+                let timeArrayFormatted = timeArrayMilliseconds.map(formatTimeFromMilliseconds);
+
+
+                var buttonsContainer = document.getElementById('buttons-container');
+
+                timeArray.forEach(function (timestamp) {
+                    var button = document.createElement('button');
+                    var dateTime = new Date(timestamp);
+                    var hours = dateTime.getHours().toString().padStart(2, '0');
+                    var minutes = dateTime.getMinutes().toString().padStart(2, '0');
+                    button.textContent = hours + ':' + minutes;
+                    button.className = 'timestamp-button';
+                    button.dataset.timestamp = timestamp;
+                    button.addEventListener('click', handleButtonClick);
+                    buttonsContainer.appendChild(button);
+                    if (!selectedButton) {
+                        button.classList.add('selected-button');
+                        selectedButton = button;
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('', error);
+            });
+
+        var selectedButton = null;
+
+        function handleButtonClick() {
+            var timestamp = this.dataset.timestamp;
+            myLayer.setUrl(myURL + '&time=' + timestamp, false);
+
+            if (selectedButton) {
+                selectedButton.classList.remove('selected-button');
+            }
+            this.classList.add('selected-button');
+            selectedButton = this;
+        }
+
+    </script>
+</body>
+
+</html>

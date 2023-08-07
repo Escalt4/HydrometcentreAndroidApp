@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#f7f6f4"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:text="Среда 19 июля"
+        android:layout_width="match_parent"
+        android:background="@color/colorHead"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:layout_height="40dp"
+        android:id="@+id/textViewDate" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="#d3d3d3"
+        android:paddingHorizontal="10dp"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:paddingBottom="5dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayoutNigth">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/image_not_found"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:id="@+id/imageViewNigth" />
+
+            <TextView
+                android:text="12..14°"
+                android:minWidth="55dp"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewNigthTemp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:paddingTop="5dp"
+            android:text="Облачно.\nДождь, местами сильный.\nГроза.\nВетер юго-западный с переходом на западный 7-12 м/c, местами порывы до 18 м/c"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewNigthDescription" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:background="#f7f6f4"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:paddingBottom="5dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayoutDay">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/image_not_found"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:id="@+id/imageViewDay" />
+
+            <TextView
+                android:text="17..19°"
+                android:minWidth="55dp"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewDayTemp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:paddingTop="5dp"
+            android:text="Облачно.\nВременами небольшой дождь"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewDayDescription" />
+
+    </LinearLayout>
+
+</LinearLayout>

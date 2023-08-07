@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+	
+	<item
+        android:id="@+id/changeRegion"
+       android:icon="@drawable/location_edit"
+        app:showAsAction="always" />
+	
+	<item
+        android:id="@+id/nowcastingMap"
+       android:icon="@drawable/map"
+        app:showAsAction="always" />
+</menu>
+
